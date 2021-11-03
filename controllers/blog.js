@@ -1,15 +1,14 @@
 blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
-const jwt = require('jsonwebtoken');
+/* const jwt = require('jsonwebtoken'); */
 const userExtractor = require('../utils/userExtractor');
 
 blogsRouter.get('/', async (request, response) => {
-    const blogs = await Blog.find({})
-            .populate('user', {
+    const blogs = await Blog.find({}).populate('user', {
             username: 1,
             name: 1,
     });
-    response.json(blogs.map(blog => blog.toJSON()));
+    response.json(blogs);
 });
 
 /* blogsRouter.get('/', userExtractor, async (request, response) => {
@@ -20,7 +19,7 @@ blogsRouter.get('/', async (request, response) => {
     response.json(userBlogs);
 }) */
 
-blogsRouter.get('/:id', userExtractor, async (request, response) => {
+/* blogsRouter.get('/:id', userExtractor, async (request, response) => {
     const blog = await Blog.findById(request.params.id);
     const user = request.user;
 
@@ -37,7 +36,7 @@ blogsRouter.get('/:id', userExtractor, async (request, response) => {
     } else {
         response.status(404).end();
     }
-});
+}); */
 
 blogsRouter.post('/', userExtractor, async (request, response) => {
     const body = request.body;
