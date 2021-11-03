@@ -199,7 +199,6 @@ describe('User information', () => {
 })
 
 
-
 afterAll(() => {
     mongoose.connection.close()
 });

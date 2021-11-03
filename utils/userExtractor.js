@@ -13,7 +13,7 @@ const userExtractor =  async (request, response, next) => {
     }
 
      request.user = await User.findById(decodedToken.id);
-
+     /* console.log(request.user) */
      if(!request.user) {
          response.status(401)
                  .json({ error: "unauthorized action" })

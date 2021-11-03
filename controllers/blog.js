@@ -3,17 +3,34 @@ const Blog = require('../models/blog');
 const jwt = require('jsonwebtoken');
 const userExtractor = require('../utils/userExtractor');
 
-blogsRouter.get('/', async (req, res) => {
+blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({})
             .populate('user', {
             username: 1,
             name: 1,
     });
-    res.json(blogs);
+    response.json(blogs.map(blog => blog.toJSON()));
 });
 
-blogsRouter.get('/:id', async (request, response) => {
+/* blogsRouter.get('/', userExtractor, async (request, response) => {
+    const blog = await Blog.find({})
+    const user = request.user
+
+    const userBlogs = user.blogs.map( b => b.title);
+    response.json(userBlogs);
+}) */
+
+blogsRouter.get('/:id', userExtractor, async (request, response) => {
     const blog = await Blog.findById(request.params.id);
+    const user = request.user;
+
+
+
+
+    if(blog.user.toString() === user._id) {
+      const userBlogs =  user.blogs.map(b => b);
+      console.log(userBlogs)
+    }
 
     if (blog) {
         response.status(200).json(blog);
@@ -42,7 +59,7 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
         user.blogs = user.blogs.concat(savedBlog._id);
         await user.save();
 
-        response.json(savedBlog);
+        response.json(savedBlog.toJSON());
     }
 });
 
