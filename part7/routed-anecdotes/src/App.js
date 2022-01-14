@@ -8,6 +8,8 @@ import {
     useHistory,
 } from 'react-router-dom';
 
+import { useField } from './hooks';
+
 const Menu = () => {
   const padding = {
     paddingRight: 5
@@ -70,46 +72,51 @@ const Footer = () => (
 
 const CreateNew = (props) => {
   const history = useHistory()
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
-
+  const content = useField('content');
+  const author = useField('author')
+  const info = useField('info')
+  
+  const reset = () => {
+    content.reset.clear()
+    author.reset.clear()
+    info.reset.clear()
+    
+  }
+  
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    props.addNew({
-      content,
-      author,
-      info,
-      votes: 0
-    })
-    props.notify(content);
-    history.push('/')
-    
-    
-   
-  }
+      e.preventDefault();
+      props.addNew({
+          content: content.value,
+          author: author.value,
+          info: info.value,
+          votes: 0,
+      });
+      props.notify(content.value);
+      history.push('/');
+  };
 
   return (
-    <div>
-      <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
-        </div>
-        <div>
-          author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
-        </div>
-        <div>
-          url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
-        </div>
-        <button>create</button>
-      </form>
-    </div>
-  )
+      <div>
+          <h2>create a new anecdote</h2>
+          <form onSubmit={handleSubmit}>
+              <div>
+                  content
+                  <input {...content} />
+              </div>
+              <div>
+                  author
+                  <input {...author} />
+              </div>
+              <div>
+                  info
+                  <input {...info} />
+              </div>
+              <button>create</button>
+          </form>
+          <button onClick={reset}>reset</button>
+      </div>
+  );
 
 }
 
@@ -120,7 +127,7 @@ const CreateNew = (props) => {
     }
     return (
       <div>
-        a new anecdote { message } created
+        { message } 
       </div>
     )
   }
@@ -142,12 +149,12 @@ const App = () => {
       id: '2'
     }
   ])
-
+  const field = useField()
   const [notification, setNotification] = useState('')
 
 
   const notify = (message) => {
-    setNotification(message)
+    setNotification(` a new anecdote "${message}" created`)
 
     setTimeout(() => {
       setNotification(null)
