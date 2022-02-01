@@ -89,12 +89,50 @@ let books = [
 ];
 
 const typeDefs = gql`
+  type Author {
+      name: String!
+      id: ID!
+      born: Int!
+      bookCount: Int!
+  }
+
+  type Books {
+      title: String!
+      author: String!
+      published: Int!
+      genres: [String]
+  }
+
   type Query {
+      author: String!,
+      born: Int!,
+      id: ID!
+      bookCount: Int!
+      authorCount: Int!
+      allBooks: [Books!]!
+      allAuthors: [Author!]!
+      findBook(author: String!): Books
   }
 `;
 
 const resolvers = {
-    Query: {},
+    Query: {
+        bookCount: () => books.length,
+        authorCount: () => authors.length,
+        allBooks: () => books,
+        findBook: (root, args) => books.find(b => b.author === args.author),
+        allAuthors: () => authors
+    },
+
+    Author: {
+       bookCount: (root) => {
+           let bookCount = books.map(b => b.id === root.id)
+            return bookCount.length
+        }
+
+        
+        
+    }
 };
 
 const server = new ApolloServer({
